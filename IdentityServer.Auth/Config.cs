@@ -1,6 +1,8 @@
-﻿using IdentityServer4;
+﻿using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
+using System.Security.Claims;
 
 namespace IdentityServer.Auth
 {
@@ -18,37 +20,39 @@ namespace IdentityServer.Auth
                         AllowedScopes = { "movieAPI" }
                    },
             new Client {
-                       ClientId = "movies_mvc_client",
-                       ClientName = "Movies MVC Web App",
-                       AllowedGrantTypes = GrantTypes.Hybrid,
-                       RequirePkce = false,
-                       AllowRememberConsent = false,
-                       RedirectUris = new List<string>()
-                       {
-                           "https://localhost:5002/signin-oidc"
-                       },
-                       PostLogoutRedirectUris = new List<string>()
-                       {
-                           "https://localhost:5002/signout-callback-oidc"
-                       },
-                       ClientSecrets = new List<Secret>
-                       {
-                           new Secret("secret".Sha256())
-                       },
-                       AllowedScopes = new List<string>
-                       {
-                           IdentityServerConstants.StandardScopes.OpenId,
-                           IdentityServerConstants.StandardScopes.Profile,
-                           IdentityServerConstants.StandardScopes.Address,
-                           IdentityServerConstants.StandardScopes.Email,
-                           "movieAPI",
-                           "roles"
-                       }
+                   ClientId = "movies_mvc_client",
+                   ClientName = "Movies MVC Web App",
+                   AllowedGrantTypes = GrantTypes.Code,
+                   RequirePkce = false,
+                   AllowRememberConsent = false,
+                   RedirectUris = new List<string>()
+                   {
+                       // client url and port
+                       "https://localhost:5002/signin-oidc" 
+                   },
+                   PostLogoutRedirectUris = new List<string>()
+                   {
+                       "https://localhost:5002/signout-callback-oidc"
+                   },
+                   ClientSecrets = new List<Secret>
+                   {
+                       new Secret("secret".Sha256())
+                   },
+                   AllowedScopes = new List<string>
+                   {
+                       IdentityServerConstants.StandardScopes.OpenId,
+                       IdentityServerConstants.StandardScopes.Profile,
+                       IdentityServerConstants.StandardScopes.Address,
+                       IdentityServerConstants.StandardScopes.Email,
+                       "movieAPI",
+                       "roles"
+                   }
             }
         };
 
         public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource> {
-          //  new IdentityResource
+            new IdentityResources.OpenId(),
+            new IdentityResources.Profile(),
         };
 
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource> {
@@ -61,7 +65,17 @@ namespace IdentityServer.Auth
 
         // AddTestUsers require list instead of IEnumerable
         public static List<TestUser> TestUsers => new List<TestUser> {
-          //  new TestUser
+          new TestUser
+                {
+                    SubjectId = "5BE86359-073C-434B-AD2D-A3932222DABE",
+                    Username = "tungdao",
+                    Password = "1102",
+                    Claims = new List<Claim>
+                    {
+                        new Claim(JwtClaimTypes.GivenName, "tung"),
+                        new Claim(JwtClaimTypes.FamilyName, "dao")
+                    }
+                }
         };
     }
 }
