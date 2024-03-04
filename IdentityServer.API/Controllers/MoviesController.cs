@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IdentityServer.API.Data;
 using IdentityServer.API.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentityServer.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize("ClientIdPolicy")]
     public class MoviesController : ControllerBase
     {
         private readonly IdentityServerAPIContext _context;
