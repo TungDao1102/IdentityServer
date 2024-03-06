@@ -9,6 +9,7 @@ namespace IdentityServer.Auth
     public static class Config
     {
         public static IEnumerable<Client> Clients => new List<Client> {
+            // to get identity token jwt
             new Client
                    {
                         ClientId = "movieClient",
@@ -19,10 +20,12 @@ namespace IdentityServer.Auth
                         },
                         AllowedScopes = { "movieAPI" }
                    },
+            // to use openid connect
             new Client {
                    ClientId = "movies_mvc_client",
                    ClientName = "Movies MVC Web App",
-                   AllowedGrantTypes = GrantTypes.Code,
+                   AllowedGrantTypes = GrantTypes.Hybrid, // old: GrantTypes.Code
+                   // GrantTypes.Code dont need  RequirePkce = false cause it default is true
                    RequirePkce = false,
                    AllowRememberConsent = false,
                    RedirectUris = new List<string>()
@@ -40,6 +43,7 @@ namespace IdentityServer.Auth
                    },
                    AllowedScopes = new List<string>
                    {
+                       // OpenId and profile for type code, the rest addittion for hybrid
                        IdentityServerConstants.StandardScopes.OpenId,
                        IdentityServerConstants.StandardScopes.Profile,
                        IdentityServerConstants.StandardScopes.Address,

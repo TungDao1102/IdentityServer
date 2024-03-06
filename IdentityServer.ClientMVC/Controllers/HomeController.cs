@@ -1,5 +1,10 @@
 ﻿using IdentityServer.ClientMVC.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Diagnostics;
 
 namespace IdentityServer.ClientMVC.Controllers
@@ -17,10 +22,28 @@ namespace IdentityServer.ClientMVC.Controllers
         {
             return View();
         }
-
-        public IActionResult Privacy()
+        [Authorize]
+        public async Task<IActionResult> Privacy()
         {
+            await LogTokenAndClaim();
             return View();
+        }
+
+        public async Task LogTokenAndClaim()
+        {
+            var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+            Console.WriteLine($"Identity token: {identityToken}");
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"Claim type: {claim.Type} - Claim value: {claim.Value}");
+            }
+        }
+
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            // khong su dung await HttpContext.SignOutAsync(); vi no khong the logout hoan toan 
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
