@@ -1,17 +1,25 @@
 ﻿using IdentityModel.Client;
+using IdentityServer.ClientMVC.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text.Json.Serialization;
+using static IdentityModel.OidcConstants;
 
 namespace IdentityServer.ClientMVC.Service
 {
     public class BaseGetToken
     {
         private readonly IHttpClientFactory _factory;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public BaseGetToken(IHttpClientFactory factory)
+        public BaseGetToken(IHttpClientFactory factory, IHttpContextAccessor httpContext)
         {
             _factory = factory;
+            _httpContext = httpContext;
         }
         public async Task GetDataByToken()
         {
@@ -73,6 +81,35 @@ namespace IdentityServer.ClientMVC.Service
             //  List<T> data = JsonConvert.DeserializeObject<T>(content);
 
             #endregion
+        }
+
+        public async Task<UserInfoViewModel> GetUserInfo()
+        {
+            var idpClient = _factory.CreateClient("IDPClient");
+            var metaDataRespone = await idpClient.GetDiscoveryDocumentAsync();
+            if (metaDataRespone.IsError)
+            {
+                // throw http 500
+                throw new HttpRequestException("identity server is not working");
+            }
+            var accessToken = await _httpContext.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            var userInfoResponse = await idpClient.GetUserInfoAsync(new UserInfoRequest
+            {
+                Address = metaDataRespone.UserInfoEndpoint,
+                Token = accessToken
+            });
+            if (userInfoResponse.IsError)
+            {
+                // throw http 500
+                throw new HttpRequestException("something went wrong when get user info");
+            }
+            
+            var userInfoDictionary = new Dictionary<string, string>();
+            foreach(var claim in userInfoResponse.Claims)
+            {
+                userInfoDictionary.Add(claim.Type, claim.Value);
+            }
+            return new UserInfoViewModel(userInfoDictionary);
         }
     }
 }

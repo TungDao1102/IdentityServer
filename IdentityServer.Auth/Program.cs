@@ -15,6 +15,7 @@ builder.Services.AddIdentityServer()
     .AddTestUsers(TestUsers.Users)
     .AddDeveloperSigningCredential();
 
+// https://identityserver4.readthedocs.io/en/latest/quickstarts/5_entityframework.html for real database instead of in memory data
 
 var app = builder.Build();
 
