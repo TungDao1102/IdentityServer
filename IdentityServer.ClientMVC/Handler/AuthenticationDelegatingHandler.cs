@@ -7,8 +7,8 @@ namespace IdentityServer.ClientMVC.Handler
 {
     public class AuthenticationDelegatingHandler : DelegatingHandler
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ClientCredentialsTokenRequest _clientCredentials;
+        //private readonly IHttpClientFactory _httpClientFactory;
+        //private readonly ClientCredentialsTokenRequest _clientCredentials;
         private readonly IHttpContextAccessor _contextAccessor;
         #region grant type code
         //public AuthenticationDelegatingHandler(IHttpClientFactory httpClientFactory, ClientCredentialsTokenRequest clientCredentials)

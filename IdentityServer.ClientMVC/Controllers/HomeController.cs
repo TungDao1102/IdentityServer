@@ -26,6 +26,7 @@ namespace IdentityServer.ClientMVC.Controllers
         public async Task<IActionResult> Privacy()
         {
             await LogTokenAndClaim();
+            await Console.Out.WriteLineAsync($"jwt token is:{HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken)}");
             return View();
         }
 
@@ -37,6 +38,13 @@ namespace IdentityServer.ClientMVC.Controllers
             {
                 Console.WriteLine($"Claim type: {claim.Type} - Claim value: {claim.Value}");
             }
+        }
+
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> OnlyAdmin()
+        {
+          //  var data = await _service.GetInfo();
+            return View();
         }
 
         public async Task Logout()

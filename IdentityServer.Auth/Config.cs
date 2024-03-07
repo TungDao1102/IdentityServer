@@ -10,16 +10,16 @@ namespace IdentityServer.Auth
     {
         public static IEnumerable<Client> Clients => new List<Client> {
             // to get identity token jwt
-            new Client
-                   {
-                        ClientId = "movieClient",
-                        AllowedGrantTypes = GrantTypes.ClientCredentials,
-                        ClientSecrets =
-                        {
-                            new Secret("secret".Sha256())
-                        },
-                        AllowedScopes = { "movieAPI" }
-                   },
+            //new Client
+            //       {
+            //            ClientId = "movieClient",
+            //            AllowedGrantTypes = GrantTypes.ClientCredentials,
+            //            ClientSecrets =
+            //            {
+            //                new Secret("secret".Sha256())
+            //            },
+            //            AllowedScopes = { "movieAPI" }
+            //       },
             // to use openid connect
             new Client {
                    ClientId = "movies_mvc_client",
@@ -57,6 +57,9 @@ namespace IdentityServer.Auth
         public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource> {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
+            new IdentityResources.Email(),
+            new IdentityResources.Address(),
+            new IdentityResource("roles", "Your role", new List<string>(){"role"})
         };
 
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource> {

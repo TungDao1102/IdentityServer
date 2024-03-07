@@ -1,6 +1,7 @@
 using IdentityServer.Auth;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
+using IdentityServerHost.Quickstart.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -10,7 +11,8 @@ builder.Services.AddIdentityServer()
     .AddInMemoryIdentityResources(Config.IdentityResources) // user information, eg id,email,...
  //   .AddInMemoryApiResources(Config.ApiResources) // which part was protected
     .AddInMemoryApiScopes(Config.ApiScopes)     // what client was allowed to do
-    .AddTestUsers(Config.TestUsers)
+                                                //  .AddTestUsers(Config.TestUsers)
+    .AddTestUsers(TestUsers.Users)
     .AddDeveloperSigningCredential();
 
 

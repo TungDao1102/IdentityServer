@@ -1,5 +1,7 @@
+using IdentityModel;
 using IdentityModel.Client;
 using IdentityServer.ClientMVC.Handler;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Net.Http.Headers;
@@ -57,9 +59,19 @@ builder.Services.AddAuthentication(options =>
     option.Scope.Add("openid");
     option.Scope.Add("profile");
     option.Scope.Add("movieAPI");
+    option.Scope.Add("address");
+    option.Scope.Add("email");
+    option.Scope.Add("roles");
+    option.ClaimActions.MapUniqueJsonKey("role", "role");
 
     option.SaveTokens = true;
     option.GetClaimsFromUserInfoEndpoint = true;
+
+    option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        NameClaimType = JwtClaimTypes.GivenName,
+        RoleClaimType = JwtClaimTypes.Role
+    };
 });
 
 var app = builder.Build();
